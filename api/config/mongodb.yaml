@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+spec:
+  ports:
+  - port: 27017
+    targetPort: 27017
+  selector:
+    app: todo-mongodb
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb-deploy
+spec:
+  volumes:
+  - name: mongodb-vol
+    persistentVolumeClaim:
+      claimName: mongodb-pvc
+  containers:
+  - image: mongodb
+    name: containerMongodb
+    command:
+    - mongod
+    - “ — bind_ip”
+    - “0.0.0.0”
+    ports:
+    - containerPort: 27017
+    volumeMounts:
+    - name: mongodb-vol
+      mountPath: /data/db
